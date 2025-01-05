@@ -18,15 +18,67 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  * reverseMachine.decrypt('AEIHQX SX DLLU!', 'alphonse') => '!NWAD TA KCATTA'
  * 
- */
+  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(isDirect = true) {
+    this.isDirect = isDirect; 
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+
+  encrypt(message, key) {
+    if (!message || !key) throw new Error('Incorrect arguments!');
+
+   
+    message = message.toUpperCase();
+    key = key.toUpperCase();
+
+    let result = []; 
+    let keyIndex = 0; 
+
+    for (let i = 0; i < message.length; i++) {
+      let char = message[i];
+
+      if (char < 'A' || char > 'Z') {
+        result.push(char);
+        continue;
+      }
+
+      let letterCode = (char.charCodeAt(0) - 65 + (key[keyIndex % key.length].charCodeAt(0) - 65)) % 26;
+      result.push(String.fromCharCode(65 + letterCode));
+
+      keyIndex++; 
+    }
+
+    if (!this.isDirect) result.reverse();
+
+    return result.join('');
+  }
+
+  decrypt(message, key) {
+    if (!message || !key) throw new Error('Incorrect arguments!');
+
+    message = message.toUpperCase();
+    key = key.toUpperCase();
+
+    let result = []; 
+    let keyIndex = 0;
+
+    for (let i = 0; i < message.length; i++) {
+      let char = message[i];
+
+      if (char < 'A' || char > 'Z') {
+        result.push(char);
+        continue;
+      }
+
+      let letterCode = (char.charCodeAt(0) - 65 - (key[keyIndex % key.length].charCodeAt(0) - 65) + 26) % 26;
+      result.push(String.fromCharCode(65 + letterCode));
+
+      keyIndex++; 
+    }
+
+    if (!this.isDirect) result.reverse();
+
+    return result.join('');
   }
 }
 
